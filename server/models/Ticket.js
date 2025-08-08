@@ -28,6 +28,11 @@ const ticketSchema = new Schema({
     enum: ['low','medium','high'], 
     default: 'medium' 
   },
+  category: { 
+    type: String, 
+    enum: ['Software','Hardware','Infrastructure','Other'], 
+    default: 'Software' 
+  },
   reporter: { 
     type: Schema.Types.ObjectId, 
     ref: 'User', 

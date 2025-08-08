@@ -7,10 +7,10 @@ const router = express.Router();
 
 /** Create ticket */
 router.post('/', authenticate, async (req,res) => {
-  const { title, description, priority } = req.body;
+  const { title, description, priority, category } = req.body;
   try {
     const ticket = await Ticket.create({
-      title, description, priority,
+      title, description, priority, category,
       reporter: req.user._id
     });
     // broadcast via socket
