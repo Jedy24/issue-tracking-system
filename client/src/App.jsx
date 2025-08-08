@@ -1,20 +1,31 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 
-export default function App(){
+const AppContent = () => {
+  const { isAuthenticated, logout } = useAuth();
+  const [currentPage, setCurrentPage] = React.useState('login');
+
+  if (isAuthenticated) {
+    return <Dashboard onLogout={logout} />;
+  }
+
+  switch (currentPage) {
+    case 'register':
+      return <Register onSwitchToLogin={() => setCurrentPage('login')} />;
+    default:
+      return <Login onSwitchToRegister={() => setCurrentPage('register')} />;
+  }
+};
+
+const App = () => {
   return (
-    <BrowserRouter>
-      <nav>
-        <Link to="/">Dashboard</Link> | <Link to="/login">Login</Link>
-      </nav>
-      <Routes>
-        <Route path="/" element={<Dashboard/>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/register" element={<Register/>} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
-}
+};
+
+export default App;
