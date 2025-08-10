@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import apiClient from '../api/axios';
+import Toast, { toast } from 'react-hot-toast';
 
 const AuthContext = createContext();
 
@@ -8,16 +9,23 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Cek apakah ada token saat aplikasi pertama kali dimuat
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      // TODO: Idealnya, verifikasi token ini dengan endpoint /me atau /profile di backend
-      // Untuk sekarang, kita asumsikan token valid dan coba ambil data user
-      // Jika Anda punya endpoint /me, panggil di sini.
-      // Untuk contoh ini, kita set user dummy jika ada token.
-      setUser({ name: 'User' }); // Ganti dengan data user asli dari API
-    }
-    setLoading(false);
+    const checkUserLoggedIn = async () => {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        try {
+          const response = await apiClient.get('/auth/me');
+          setUser(response.data);
+        } catch (error) {
+          console.error("Sesi tidak valid, silakan login kembali.", error);
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          setUser(null);
+        }
+      }
+      setLoading(false);
+    };
+
+    checkUserLoggedIn();
   }, []);
 
   const login = async (email, password) => {
@@ -29,28 +37,32 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('refreshToken', refresh);
       setUser(userData);
       
-      return true; // Sukses
+      toast.success('Login successful!');
+      return true;
     } catch (error) {
       console.error('Login failed:', error.response?.data?.message || error.message);
-      return false; // Gagal
+      toast.error('Login failed. Please check your credentials.');
+      return false; 
     }
   };
 
   const register = async (name, email, password) => {
     try {
       await apiClient.post('/auth/register', { name, email, password });
-      return true; // Sukses
+      toast.success('Registration successful! Please log in.');
+      return true;
     } catch (error) {
       console.error('Registration failed:', error.response?.data?.message || error.message);
-      return false; // Gagal
+      toast.error('Registration failed. Please try again.');
+      return false;
     }
   };
 
   const logout = () => {
-    // TODO: Panggil endpoint /logout di backend untuk membatalkan refresh token
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     setUser(null);
+    toast.success('Logout successful!');
   };
 
   const value = {

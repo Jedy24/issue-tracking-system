@@ -9,6 +9,7 @@ const rateLimit = require('express-rate-limit');
 const { Server } = require('socket.io');
 const authRoutes = require('./routes/auth');
 const ticketRoutes = require('./routes/tickets');
+const adminRoutes = require('./routes/admin');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./utils/swagger');
 
@@ -34,6 +35,7 @@ app.use(limiter);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', authRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/admin', adminRoutes);
 
 // health
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));

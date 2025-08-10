@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const { signAccess, signRefresh } = require('../utils/jwt');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -121,6 +122,10 @@ router.post('/logout', async (req, res) => {
   } catch (err) {
     res.status(401).json({ message: 'Invalid token' });
   }
+});
+
+router.get('/me', authenticate, (req, res) => {
+  res.json(req.user);
 });
 
 

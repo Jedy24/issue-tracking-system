@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import apiClient from '../api/axios';
+import toast from 'react-hot-toast';
 
 const CreateTicketModal = ({ isOpen, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
@@ -20,10 +21,11 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit }) => {
       onSubmit(response.data); 
 
       setFormData({ title: '', description: '', priority: 'medium', category: 'Software' });
+      toast.success('Tiket berhasil dibuat!');
       onClose(); 
     } catch (err) {
-      console.error("Gagal membuat tiket:", err);
-      setError('Gagal membuat tiket. Silakan coba lagi.');
+      const message = err.response?.data?.message || 'Gagal membuat tiket';
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -44,8 +46,6 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit }) => {
               ×
             </button>
           </div>
-          
-          {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
 
           <div className="space-y-6">
             <div>
@@ -86,9 +86,9 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit }) => {
                   onChange={(e) => setFormData({...formData, priority: e.target.value})}
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 >
-                  <option value="low">Rendah</option>
-                  <option value="medium">Sedang</option>
-                  <option value="high">Tinggi</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
                 </select>
               </div>
 
