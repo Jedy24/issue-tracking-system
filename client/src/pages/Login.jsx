@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Ticket } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const Login = ({ onLogin, onSwitchToRegister }) => {
+const Login = ({ onLoginSuccess, onSwitchToRegister }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +16,9 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
 
     const success = await login(email, password);
 
-    if (!success) {
+    if (success){
+      onLoginSuccess();
+    } else {
       setError('Email atau password salah. Silakan coba lagi.');
       setIsLoading(false);
     }

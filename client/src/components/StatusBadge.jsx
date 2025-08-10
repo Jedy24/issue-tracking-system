@@ -2,9 +2,10 @@ import React from 'react';
 
 const StatusBadge = ({ status }) => {
   const config = {
-    open: { bg: 'bg-blue-50 border-blue-200', text: 'text-blue-700', label: 'Terbuka' },
-    in_progress: { bg: 'bg-purple-50 border-purple-200', text: 'text-purple-700', label: 'Dikerjakan' },
-    closed: { bg: 'bg-gray-50 border-gray-200', text: 'text-gray-700', label: 'Selesai' },
+    open: { bg: 'bg-blue-50 border-blue-200', text: 'text-blue-700', label: 'Open' },
+    in_progress: { bg: 'bg-purple-50 border-purple-200', text: 'text-purple-700', label: 'In Progress' },
+    done: { bg: 'bg-amber-50 border-amber-200', text: 'text-amber-700', label: 'Done' },
+    closed: { bg: 'bg-gray-50 border-gray-200', text: 'text-gray-700', label: 'Closed' },
   };
 
   const { bg, text, label } = config[status];
