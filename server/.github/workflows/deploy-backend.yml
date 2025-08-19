@@ -1,0 +1,42 @@
+name: Backend CI/CD (Render)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'server/**'
+
+jobs:
+  ci:
+    name: Build & Test Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        working-directory: ./server
+        run: npm ci
+
+      - name: Run Tests 🧪
+        working-directory: ./server
+        run: npm test
+        env:
+          CI: true
+          MONGODB_URI: mongodb://localhost:27017/testdb
+
+  deploy:
+    name: Deploy Backend to Render 🚀
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
