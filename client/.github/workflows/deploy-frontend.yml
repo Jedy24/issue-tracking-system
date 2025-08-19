@@ -1,0 +1,54 @@
+name: Frontend CI/CD (Vercel)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'client/**'
+
+jobs:
+  ci:
+    name: Build & Test Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        working-directory: ./client
+        run: npm ci
+
+      - name: Run Tests 🧪
+        working-directory: ./client
+        run: npm test -- --watchAll=false
+        env:
+          CI: true
+
+      - name: Build Project
+        working-directory: ./client
+        run: npm run build
+
+  deploy:
+    name: Deploy Frontend to Vercel 🚀
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: vercel/vercel-action@v3
+        with:
+          token: ${{ secrets.VERCEL_TOKEN }}
+          project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          org-id: ${{ secrets.VERCEL_ORG_ID }}
+          working-directory: ./client
+          production: true
